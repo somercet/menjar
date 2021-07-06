@@ -1,0 +1,27 @@
+#!/bin/sh 
+
+declare -a dirs
+M="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
+keep=true
+
+dirs+=("/usr/local/share/applications" "/usr/share/applications")
+
+for d in "${dirs[@]}"
+do
+	if [[ "$d" -nt "$M" ]]
+	then
+		keep=false
+		break
+	fi
+done
+
+if $keep
+then
+	cat $M
+else
+	find "${dirs[@]}" -type f -name \*.desktop \
+		| sort \
+		| xargs awk -f $HOME/bin/menjar1.awk -- term="$1" \
+		| tee $M
+fi | awk -f $HOME/bin/menjar2.awk
+

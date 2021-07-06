@@ -1,0 +1,33 @@
+.Dd July 5, 2021
+.Dt menjar 1
+.Os
+.Sh NAME
+.Nm menjar
+.Nd A script to pull application Name and Execs from .desktop files for
+.Xr bemenu 1 ,
+or any such dynamic menu app.
+.Sh SYNOPSIS
+.Nm
+.Op Terminal
+.Sh DESCRIPTION
+.Nm
+reads the
+.Pa \&.desktop
+files in the
+.Pa applications
+directory under
+.Pa /usr/share/
+and
+.Pa /usr/local/share .
+It keeps a cache of the extracted entries and compares its timestamp to the directories.
+.Nm
+uses the
+.Ql $LANG
+variable to localize the application names.
+.Sh SEE ALSO
+.Xr bemenu 1
+.Sh AUTHORS
+.An Aq Mt somercet@gmail.com
+.Sh BUGS
+This is alpha level software. Please report bugs to
+.Lk 
