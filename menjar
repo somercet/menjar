@@ -1,14 +1,28 @@
 #!/bin/sh 
 
+LLIB=/usr/local/lib/menjar
+
 declare -a dirs
-M="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
+cache="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
+dirs=("/usr/local/share/applications" "/usr/share/applications")
 keep=true
 
-dirs+=("/usr/local/share/applications" "/usr/share/applications")
+while [[ $# -ne 0 ]]
+do
+	case $1 in
+		-f)	keep=false         ;;
+		-t)	term="$2"  ; shift ;;
+		-d)	dirs+="$2" ; shift ;;
+		 *)	echo "Unknown option: $1"
+			exit 1             ;;
+	esac
+	shift
+done
+
 
 for d in "${dirs[@]}"
 do
-	if [[ "$d" -nt "$M" ]]
+	if [[ "$d" -nt "$cache" ]]
 	then
 		keep=false
 		break
@@ -17,11 +31,11 @@ done
 
 if $keep
 then
-	cat $M
+	cat $cache
 else
 	find "${dirs[@]}" -type f -name \*.desktop \
+		| xargs awk -f $LLIB/menjar1.awk -- term="$term" \
 		| sort \
-		| xargs awk -f $HOME/bin/menjar1.awk -- term="$1" \
-		| tee $M
-fi | awk -f $HOME/bin/menjar2.awk
+		| tee $cache
+fi | awk -f $LLIB/menjar2.awk
 

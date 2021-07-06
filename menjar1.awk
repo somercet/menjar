@@ -1,18 +1,21 @@
 
 BEGIN {
 	L = ENVIRON["LANG"]
-	sub(/\..*/, "", L)
-	M[L] = 5
-	if ( L ~ "@" ) {
-		temp = L
-		sub(/@.*/, "", temp)
-		M[temp] = 4
-	}
-	if ( L ~ "_" ) {
-		temp = L
-		sub(/@.*/, "", temp)
-		M[temp] = 3
-	}
+	if ( length(L) > 0 {
+		sub(/\..*/, "", L)
+		M[L] = 5
+		if ( L ~ "@" ) {
+			temp = L
+			sub(/@.*/, "", temp)
+			M[temp] = 4
+		}
+		if ( L ~ "_" ) {
+			temp = L
+			sub(/@.*/, "", temp)
+			M[temp] = 3
+		}
+	} else
+		L[0] = 1
 }
 
 /^\[Desktop Entry/ {
@@ -49,7 +52,7 @@ BEGIN {
 }
 
 /^Name\[/ {
-	if ( ! add )
+	if ( ! add || L[0] == 1 )
 		next
 
 	S = $0

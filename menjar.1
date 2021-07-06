@@ -3,12 +3,15 @@
 .Os
 .Sh NAME
 .Nm menjar
-.Nd A script to pull application Name and Execs from .desktop files for
+.Nd A script to pull application Name and Execs from
+.Pa \&.desktop files for
 .Xr bemenu 1 ,
 or any such dynamic menu app.
 .Sh SYNOPSIS
 .Nm
-.Op Terminal
+.Op Fl f
+.Op Fl d Ar directory
+.Op Fl t Ar terminal
 .Sh DESCRIPTION
 .Nm
 reads the
@@ -18,12 +21,39 @@ files in the
 directory under
 .Pa /usr/share/
 and
-.Pa /usr/local/share .
-It keeps a cache of the extracted entries and compares its timestamp to the directories.
+.Pa /usr/local/share ,
+and returns the command for the selected menu option.
+A cache is kept of the extracted entries; its timestamp is compared to the directories and rebuilt as necessary.
 .Nm
 uses the
 .Ql $LANG
 variable to localize the application names.
+.Sh OPTIONS
+.Bl -tag
+.It Fl f
+Force a rebuild of the cache file
+.It Fl d Ar directory
+Add a directory to scan for
+.Pa .desktop
+files.
+.It Fl t Ar terminal
+Specify a terminal for CLI apps.
+.Sh FILES
+.Pa menjar.dat
+is created in
+.Pa $XDG_DATA_HOME
+or
+.Pa ${HOME}/.local/share/ .
+.Sh EXIT STATUS
+.Nm
+always exits with success, and prints the "Exec=" command for the file to stdout (if any is selected).
+To run the resulting command from the
+.Xr sway 1
+Wayland compositor, e.g., use
+.Xr swaymsg 1
+like so:
+.Pp
+.Dl set $menu menjar -t $term | xargs swaymsg exec --
 .Sh SEE ALSO
 .Xr bemenu 1
 .Sh AUTHORS
