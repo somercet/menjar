@@ -3,15 +3,15 @@
 .Os
 .Sh NAME
 .Nm menjar
-.Nd A script to pull application Name and Execs from
-.Pa \&.desktop files for
-.Xr bemenu 1 ,
-or any such dynamic menu app.
+.Nd A script to pull application Names and Execs from
+.Pa \&.desktop
+files for
+.Xr bemenu 1 .
 .Sh SYNOPSIS
 .Nm
-.Op Fl f
+.Fl t Ar terminal
 .Op Fl d Ar directory
-.Op Fl t Ar terminal
+.Op Fl f
 .Sh DESCRIPTION
 .Nm
 reads the
@@ -30,14 +30,20 @@ uses the
 variable to localize the application names.
 .Sh OPTIONS
 .Bl -tag
-.It Fl f
-Force a rebuild of the cache file
+.It Fl t Ar terminal
+Specify the terminal emulator for CLI apps.
+If unset,
+.Nm
+starts with
+.Xr x-terminal-emulator 1
+and searches through a number of the more popular terminals.
 .It Fl d Ar directory
 Add a directory to scan for
 .Pa .desktop
-files.
-.It Fl t Ar terminal
-Specify a terminal for CLI apps.
+files
+.It Fl f
+Force a rebuild of the cache file
+.El
 .Sh FILES
 .Pa menjar.dat
 is created in

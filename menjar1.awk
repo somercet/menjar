@@ -1,7 +1,7 @@
 
 BEGIN {
 	L = ENVIRON["LANG"]
-	if ( length(L) > 0 {
+	if ( length(L) > 0 ) {
 		sub(/\..*/, "", L)
 		M[L] = 5
 		if ( L ~ "@" ) {
@@ -15,7 +15,7 @@ BEGIN {
 			M[temp] = 3
 		}
 	} else
-		L[0] = 1
+		M[0] = 1
 }
 
 /^\[Desktop Entry/ {
@@ -52,7 +52,7 @@ BEGIN {
 }
 
 /^Name\[/ {
-	if ( ! add || L[0] == 1 )
+	if ( ! add || M[0] == 1 )
 		next
 
 	S = $0
