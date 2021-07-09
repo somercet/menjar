@@ -6,13 +6,15 @@ declare -a dirs
 cache="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
 dirs=("/usr/local/share/applications" "/usr/share/applications")
 keep=true
+menu="bemenu -i -p#"
 
 while [[ $# -ne 0 ]]
 do
 	case $1 in
-		-f)	keep=false           ;;
 		-t)	term="$2"    ; shift ;;
 		-d)	dirs+=("$2") ; shift ;;
+		-m)	menu="$2"    ; shift ;;
+		-f)	keep=false           ;;
 		 *)	echo "Unknown option: $1" 1>&2
 			exit 1               ;;
 	esac
@@ -45,5 +47,5 @@ else
 		| xargs awk -f $LLIB/menjar1.awk -- term="$term" \
 		| sort \
 		| tee $cache
-fi | awk -f $LLIB/menjar2.awk
+fi | awk -f $LLIB/menjar2.awk -- menu="$menu"
 

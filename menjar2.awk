@@ -1,17 +1,18 @@
 
 BEGIN {
 	FS = "\t"
-	names = "bemenu -i -p#"
+	if (! menu)
+		menu = "bemenu -i -p#"
 }
 
 {
-	print $1 |& names
+	print $1 |& menu
 	a[$1] = $2
 }
 
 END {
-	close(names, "to")
-	names |& getline comm
+	close(menu, "to")
+	menu |& getline comm
 	if ( comm ) {
 		sub(/ +%[[:alpha:]] *$/, "", a[comm])
 		print a[comm]

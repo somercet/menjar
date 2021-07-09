@@ -6,11 +6,13 @@
 .Nd A script to pull application Names and Execs from
 .Pa \&.desktop
 files for
-.Xr bemenu 1 .
+.Xr bemenu 1
+or other dynamic menus.
 .Sh SYNOPSIS
 .Nm
 .Fl t Ar terminal
 .Op Fl d Ar directory
+.Op Fl m Ar menu-app
 .Op Fl f
 .Sh DESCRIPTION
 .Nm
@@ -24,23 +26,35 @@ and
 .Pa /usr/local/share ,
 and returns the command for the selected menu option.
 A cache is kept of the extracted entries; its timestamp is compared to the directories and rebuilt as necessary.
-.Nm
-uses the
+The
 .Ql $LANG
-variable to localize the application names.
+variable is used to localize the application names.
+.Pp
+.Nm
+prints the "Exec=" command for the selection to stdout.
+To run the resulting command from the
+.Xr sway 1
+Wayland compositor, e.g., use
+.Xr swaymsg 1 ,
+like so:
+.Pp
+.Dl set $menu menjar -t $term -m \&"dmenu -i\&" | xargs swaymsg exec --
 .Sh OPTIONS
 .Bl -tag
 .It Fl t Ar terminal
 Specify the terminal emulator for CLI apps.
 If unset,
 .Nm
-starts with
-.Xr x-terminal-emulator 1
-and searches through a number of the more popular terminals.
+searches through a number of the more popular terminals, starting with
+.Xr x-terminal-emulator 1 .
+This argument is copied as needed in the cache file.
 .It Fl d Ar directory
 Add a directory to scan for
 .Pa .desktop
 files
+.It Fl m Ar menu-app
+Specify the dynamic menu app. Defaults to
+.Ql bemenu -i -p# .
 .It Fl f
 Force a rebuild of the cache file
 .El
@@ -52,18 +66,15 @@ or
 .Pa ${HOME}/.local/share/ .
 .Sh EXIT STATUS
 .Nm
-always exits with success, and prints the "Exec=" command for the file to stdout (if any is selected).
-To run the resulting command from the
-.Xr sway 1
-Wayland compositor, e.g., use
-.Xr swaymsg 1
-like so:
-.Pp
-.Dl set $menu menjar -t $term | xargs swaymsg exec --
+always exits with success unless invoked with an incorrect option.
 .Sh SEE ALSO
 .Xr bemenu 1
 .Sh AUTHORS
-.An Aq Mt somercet@gmail.com
+.An Peter Buxton Aq Mt somercet@gmail.com
 .Sh BUGS
-This is alpha level software. Please report bugs to
-.Lk 
+This is alpha level software. Use
+.Lk https://github.com/somercet/menjar
+to report bugs.
+.Dq Menjar
+is Catalan for
+.Dq menu .
