@@ -1,41 +1,41 @@
 #!/bin/sh 
 
 LLIB=/usr/local/lib/menjar
+cache="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
 
 declare -a dirs
-cache="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
-dirs=("/usr/local/share/applications" "/usr/share/applications")
+dirs=(/usr/share/applications /usr/local/share/applications)
+terms="x-terminal-emulator gnome-terminal konsole xfce4-terminal alacritty xterm urxvt"
+
 keep=true
+debug=false
 menu="bemenu -i -p#"
 
 while [[ $# -ne 0 ]]
 do
 	case $1 in
-		-t)	term="$2"    ; shift ;;
-		-d)	dirs+=("$2") ; shift ;;
-		-m)	menu="$2"    ; shift ;;
-		-f)	keep=false           ;;
-		 *)	echo "Unknown option: $1" 1>&2
-			exit 1               ;;
+		-f)	keep=false		;;
+		-t)	term="$2" ;	shift	;;
+		-m)	menu="$2" ;	shift	;;
+		-d)	dirs+=("$2") ;	shift	;;
+		-D)	debug=true		;;
+		 *)	echo "Unknown option: '$1'" 1>&2
+			exit 1			;;
 	esac
 	shift
 done
 
-for i in x-terminal-emulator gnome-terminal konsole xfce4-terminal alacritty xterm urxvt
+for i in ${!dirs[@]}
 do
-	if [[ -n "$term" ]]
+	if [[ -d "${dirs[$i]}" ]]
 	then
-		break
-	fi
-	term=$( command -v $i )
-done
-
-for d in "${dirs[@]}"
-do
-	if [[ "$d" -nt "$cache" ]]
-	then
-		keep=false
-		break
+		if [[ "${dirs[$i]}" -nt "$cache" ]]
+		then
+			keep=false
+		fi
+	else
+		$debug && echo "Directory not found: '${dirs[$i]}'" 1>&2
+		unset dirs[$i]
 	fi
 done
 
@@ -43,6 +43,20 @@ if $keep
 then
 	cat $cache
 else
+	for i in "$term" $terms
+	do
+		term=$( command -v $i )
+		if [[ -n "$term" ]]
+		then
+			break
+		fi
+	done
+
+	if [[ -z "$term" ]] && $debug
+	then
+		echo "No \$term found." 1>&2
+	fi
+
 	find "${dirs[@]}" -type f -name \*.desktop \
 		| xargs awk -f $LLIB/menjar1.awk -- term="$term" \
 		| sort \

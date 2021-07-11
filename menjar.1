@@ -10,10 +10,11 @@ files for
 or other dynamic menus.
 .Sh SYNOPSIS
 .Nm
-.Fl t Ar terminal
 .Op Fl d Ar directory
 .Op Fl m Ar menu-app
+.Op Fl t Ar terminal
 .Op Fl f
+.Op Fl D
 .Sh DESCRIPTION
 .Nm
 reads the
@@ -41,13 +42,6 @@ like so:
 .Dl set $menu menjar -t $term -m \&"dmenu -i\&" | xargs swaymsg exec --
 .Sh OPTIONS
 .Bl -tag
-.It Fl t Ar terminal
-Specify the terminal emulator for CLI apps.
-If unset,
-.Nm
-searches through a number of the more popular terminals, starting with
-.Xr x-terminal-emulator 1 .
-This argument is copied as needed in the cache file.
 .It Fl d Ar directory
 Add a directory to scan for
 .Pa .desktop
@@ -55,8 +49,17 @@ files
 .It Fl m Ar menu-app
 Specify the dynamic menu app. Defaults to
 .Ql bemenu -i -p# .
+.It Fl t Ar terminal
+Specify the terminal emulator for CLI apps.
+If unset,
+.Nm
+searches through a number of the more popular terminals, starting with
+.Xr x-terminal-emulator 1 .
+This argument is copied as needed in the cache file.
 .It Fl f
 Force a rebuild of the cache file
+.It Fl D
+Print errors to stdout
 .El
 .Sh FILES
 .Pa menjar.dat
@@ -68,11 +71,11 @@ or
 .Nm
 always exits with success unless invoked with an incorrect option.
 .Sh SEE ALSO
-.Xr bemenu 1
+.Xr bemenu 1 , Xr dmenu 1
 .Sh AUTHORS
 .An Peter Buxton Aq Mt somercet@gmail.com
 .Sh BUGS
-This is alpha level software. Use
+This is alpha level software; use
 .Lk https://github.com/somercet/menjar
 to report bugs.
 .Dq Menjar
