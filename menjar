@@ -5,7 +5,7 @@ cache="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
 
 declare -a dirs
 dirs=(/usr/share/applications /usr/local/share/applications)
-terms="x-terminal-emulator gnome-terminal konsole xfce4-terminal alacritty xterm urxvt"
+terms="x-terminal-emulator xterm konsole gnome-terminal xfce4-terminal alacritty urxvt"
 
 keep=true
 debug=false
