@@ -57,7 +57,7 @@ else
 		echo "No \$term found." 1>&2
 	fi
 
-	find "${dirs[@]}" -type f -name \*.desktop \
+	find -L "${dirs[@]}" -type f -name \*.desktop \
 		| xargs awk -f $LLIB/menjar1.awk -- term="$term" \
 		| sort \
 		| tee $cache
