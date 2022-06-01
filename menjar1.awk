@@ -38,7 +38,7 @@ BEGIN {
 
 /^Terminal=true/ {
 	if ( add )
-		T = term " -e "
+		T = term " -x "
 }
 
 /^Name=/ {
