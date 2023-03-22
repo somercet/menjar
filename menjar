@@ -1,6 +1,6 @@
 #!/bin/sh 
 
-LLIB=/usr/lib/menjar
+LLIB=/usr/local/lib/menjar
 cache="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
 
 dirs='/usr/share/applications
