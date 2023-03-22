@@ -3,21 +3,24 @@
 LLIB=/usr/local/lib/menjar
 cache="${XDG_DATA_HOME:-${HOME}/.local/share}/menjar.dat"
 
-declare -a dirs
-dirs=(/usr/share/applications /usr/local/share/applications)
+dirs='/usr/share/applications
+/usr/local/share/applications
+'
+
+[ -n "$XDG_DATA_DIRS" ] && dirs="$(echo "$XDG_DATA_DIRS" | sed 's/:/\n/g')"
 terms="x-terminal-emulator xterm konsole gnome-terminal xfce4-terminal alacritty urxvt"
 
 keep=true
 debug=false
-menu="bemenu -i -p#"
+menu="bemenu"
 
-while [[ $# -ne 0 ]]
+while [ $# -ne 0 ]
 do
 	case $1 in
 		-f)	keep=false		;;
 		-t)	term="$2" ;	shift	;;
 		-m)	menu="$2" ;	shift	;;
-		-d)	dirs+=("$2") ;	shift	;;
+		-d)	dirs="$dirs\n$2" ;	shift	;;
 		-D)	debug=true		;;
 		 *)	echo "Unknown option: '$1'" 1>&2
 			exit 1			;;
@@ -25,41 +28,45 @@ do
 	shift
 done
 
-for i in ${!dirs[@]}
+# TODO get _keep value much cleaner from the loop
+_keep=$(printf '%s' "$dirs" |
+while IFS='' read -r dir
 do
-	if [[ -d "${dirs[$i]}" ]]
+	if [ -d "$dir" ] && [ -f "$cache" ]
 	then
-		if [[ "${dirs[$i]}" -nt "$cache" ]]
+        if [ -n "$( find "$dir" -newer "$cache")" ]
 		then
-			keep=false
+            printf "%s" "false"
+            exit 0
 		fi
 	else
-		$debug && echo "Directory not found: '${dirs[$i]}'" 1>&2
-		unset dirs[$i]
+        printf "%s" "false"
+        exit 0
 	fi
-done
+done)
+[ -n "$_keep" ] && keep=$_keep
 
-if $keep
+if $keep && [ -f "$cache" ]
 then
-	cat $cache
+	cat "$cache"
 else
 	for i in "$term" $terms
 	do
-		term=$( command -v $i )
-		if [[ -n "$term" ]]
+		term=$( command -v "$i" )
+		if [ -n "$term" ]
 		then
 			break
 		fi
 	done
 
-	if [[ -z "$term" ]] && $debug
+	if [ -z "$term" ] && $debug
 	then
 		echo "No \$term found." 1>&2
 	fi
 
-	find -L "${dirs[@]}" -type f -name \*.desktop \
-		| xargs awk -f $LLIB/menjar1.awk -- term="$term" \
+    find -L $(printf "%s" "$dirs" | tr "\n" " ") -type f -name \*.desktop \
+		| xargs awk -f "$LLIB/menjar1.awk" -- term="$term" \
 		| sort \
-		| tee $cache
-fi | awk -f $LLIB/menjar2.awk -- menu="$menu"
+		| tee "$cache"
+fi | awk -f "$LLIB/menjar2.awk" -- menu="$menu"
 
